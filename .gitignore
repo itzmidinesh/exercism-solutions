@@ -9,3 +9,8 @@ erl_crash.dump
 /config/*.secret.exs
 .elixir_ls/
 .exercism/
+/node_modules
+/bin/configlet
+/bin/configlet.exe
+/pnpm-lock.yaml
+/yarn.lock
