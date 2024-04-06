@@ -4,9 +4,7 @@ class Luhn:
 
     def valid(self):
         card_num = self.card_num.replace(" ", "")
-        if len(card_num) <= 1:
-            return False
-        if not card_num.isdigit():
+        if len(card_num) <= 1 or not card_num.isdigit():
             return False
         digits = [int(x) for x in card_num[::-1]]
         odd_digits = digits[0::2]
