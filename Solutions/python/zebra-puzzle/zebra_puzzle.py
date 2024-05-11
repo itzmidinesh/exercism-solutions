@@ -1,63 +1,83 @@
-from constraint import (
-    Problem,
-    AllDifferentConstraint,
-    InSetConstraint,
-    ExactSumConstraint,
-)
+from itertools import permutations
+
+# Define attributes and their possible values
+COLORS = ["red", "green", "ivory", "yellow", "blue"]
+NATIONS = ["English", "Spanish", "Ukrainian", "Norwegian", "Japanese"]
+PETS = ["dog", "snails", "fox", "horse", "zebra"]
+DRINKS = ["coffee", "tea", "milk", "orange juice", "water"]
+SMOKES = ["Old Gold", "Kools", "Chesterfields", "Lucky Strike", "Parliaments"]
 
 
-def solve_zebra_puzzle():
-    problem = Problem()
+def solve():
+    # Generate all permutations of attribute values
+    perms = [
+        list(permutations(attr)) for attr in [COLORS, NATIONS, PETS, DRINKS, SMOKES]
+    ]
+    house = None
 
-    # Define variables and their possible values
-    colors = ["red", "green", "ivory", "yellow", "blue"]
-    nations = ["English", "Spanish", "Ukrainian", "Norwegian", "Japanese"]
-    pets = ["dog", "snails", "fox", "horse", "zebra"]
-    drinks = ["coffee", "tea", "milk", "orange juice", "water"]
-    smokes = ["Old Gold", "Kools", "Chesterfields", "Lucky Strike", "Parliaments"]
+    # Iterate through permutations and apply constraints
+    for colors in perms[0]:
+        colors = list(colors)
+        if any(
+            [
+                colors.index("green") + 1 != colors.index("ivory"),
+                colors.index("blue") != 1,
+            ]
+        ):
+            continue
+        for nations in perms[1]:
+            nations = list(nations)
+            if any(
+                [
+                    colors.index("red") != nations.index("English"),
+                    nations.index("Norwegian") != 0,
+                ]
+            ):
+                continue
+            for pets in perms[2]:
+                pets = list(pets)
+                if nations.index("Spanish") != pets.index("dog"):
+                    continue
+                for drinks in perms[3]:
+                    drinks = list(drinks)
+                    if any(
+                        [
+                            drinks.index("coffee") != colors.index("green"),
+                            nations.index("Ukrainian") != drinks.index("tea"),
+                            drinks.index("milk") != 2,
+                        ]
+                    ):
+                        continue
+                    for smokes in perms[4]:
+                        smokes = list(smokes)
+                        if any(
+                            [
+                                smokes.index("Old Gold") != pets.index("snails"),
+                                smokes.index("Kools") != colors.index("yellow"),
+                                abs(smokes.index("Kools") - pets.index("horse")) != 1,
+                                abs(smokes.index("Chesterfields") - pets.index("fox"))
+                                != 1,
+                                smokes.index("Lucky Strike")
+                                != drinks.index("orange juice"),
+                                smokes.index("Parliaments")
+                                != nations.index("Japanese"),
+                            ]
+                        ):
+                            continue
+                        house = list(zip(colors, nations, pets, drinks, smokes))
+    return house
 
-    # Add variables to the problem
-    problem.addVariables(colors, range(1, 6))
-    problem.addVariables(nations, range(1, 6))
-    problem.addVariables(pets, range(1, 6))
-    problem.addVariables(drinks, range(1, 6))
-    problem.addVariables(smokes, range(1, 6))
 
-    # Add constraints
-    problem.addConstraint(AllDifferentConstraint(), colors)
-    problem.addConstraint(AllDifferentConstraint(), nations)
-    problem.addConstraint(AllDifferentConstraint(), pets)
-    problem.addConstraint(AllDifferentConstraint(), drinks)
-    problem.addConstraint(AllDifferentConstraint(), smokes)
-
-    problem.addConstraint(InSetConstraint([1]), ["Norwegian"])
-    problem.addConstraint(ExactSumConstraint(3), ["milk"])
-    problem.addConstraint(lambda a, b: a == b, ("red", "English"))
-    problem.addConstraint(lambda a, b: a == b, ("Spanish", "dog"))
-    problem.addConstraint(lambda a, b: a == b, ("green", "coffee"))
-    problem.addConstraint(lambda a, b: a == b, ("Ukrainian", "tea"))
-    problem.addConstraint(lambda a, b: abs(a - b) == 1, ("green", "ivory"))
-    problem.addConstraint(lambda a, b: a == b, ("Old Gold", "snails"))
-    problem.addConstraint(lambda a, b: a == b, ("Kools", "yellow"))
-    problem.addConstraint(lambda a, b: abs(a - b) == 1, ("Norwegian", "blue"))
-    problem.addConstraint(lambda a, b: abs(a - b) == 1, ("Chesterfields", "fox"))
-    problem.addConstraint(lambda a, b: abs(a - b) == 1, ("Kools", "horse"))
-    problem.addConstraint(lambda a, b: a == b, ("Lucky Strike", "orange juice"))
-    problem.addConstraint(lambda a, b: a == b, ("Japanese", "Parliaments"))
-
-    # Solve the problem and return the solution
-    solution = problem.getSolution()
-    return solution, nations
+# Solve the puzzle
+solution = solve()
 
 
-solution, nations = solve_zebra_puzzle()
-
-
+# Extract solutions for the questions
 def drinks_water():
-    water_house = solution["water"]
-    return [k for k, v in solution.items() if v == water_house and k in nations][0]
+    water_house = [h for h in solution if h[3] == "water"][0]
+    return water_house[1]
 
 
 def owns_zebra():
-    zebra_house = solution["zebra"]
-    return [k for k, v in solution.items() if v == zebra_house and k in nations][0]
+    zebra_house = [h for h in solution if h[2] == "zebra"][0]
+    return zebra_house[1]
