@@ -20,33 +20,21 @@ defmodule DndCharacter do
 
   @spec ability :: pos_integer()
   def ability do
-    [roll_dice(), roll_dice(), roll_dice(), roll_dice()]
+    Enum.map(1..4, fn _ -> roll_dice() end)
     |> Enum.sort(:desc)
     |> Enum.take(3)
     |> Enum.sum()
   end
 
-  defp roll_dice do
-    Enum.random(1..6)
-  end
+  defp roll_dice, do: Enum.random(1..6)
 
   @spec character :: t()
   def character do
-    strength = ability()
-    dexterity = ability()
-    constitution = ability()
-    intelligence = ability()
-    wisdom = ability()
-    charisma = ability()
+    char =
+      for key <- Map.keys(%__MODULE__{}),
+          into: %{},
+          do: {key, ability()}
 
-    %__MODULE__{
-      strength: strength,
-      dexterity: dexterity,
-      constitution: constitution,
-      intelligence: intelligence,
-      wisdom: wisdom,
-      charisma: charisma,
-      hitpoints: 10 + modifier(constitution)
-    }
+    %{char | hitpoints: 10 + modifier(char.constitution)}
   end
 end
