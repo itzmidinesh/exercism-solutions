@@ -5,18 +5,18 @@ defmodule Bob do
 
     cond do
       input == "" -> "Fine. Be that way!"
-      is_shouting?(input) and is_question?(input) -> "Calm down, I know what I'm doing!"
-      is_question?(input) -> "Sure."
-      is_shouting?(input) -> "Whoa, chill out!"
+      shouting?(input) and question?(input) -> "Calm down, I know what I'm doing!"
+      question?(input) -> "Sure."
+      shouting?(input) -> "Whoa, chill out!"
       true -> "Whatever."
     end
   end
 
-  defp is_question?(input) do
+  defp question?(input) do
     String.ends_with?(input, "?")
   end
 
-  defp is_shouting?(input) do
+  defp shouting?(input) do
     input == String.upcase(input) and input != String.downcase(input)
   end
 end
