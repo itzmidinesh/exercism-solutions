@@ -49,7 +49,7 @@ defmodule DancingDots.Zoom do
 
   @impl DancingDots.Animation
   def handle_frame(dot, frame_number, opts) do
-    velocity = Keyword.get(opts, :velocity, 0)
+    velocity = Keyword.fetch!(opts, :velocity)
     %{dot | radius: dot.radius + (frame_number - 1) * velocity}
   end
 end
