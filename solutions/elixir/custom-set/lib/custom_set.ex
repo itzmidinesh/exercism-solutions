@@ -1,6 +1,6 @@
 defmodule CustomSet do
   @opaque t :: %__MODULE__{map: map}
-  
+
   defstruct map: %{}
 
   @spec new(Enum.t()) :: t
@@ -11,7 +11,7 @@ defmodule CustomSet do
   end
 
   @spec empty?(t) :: boolean
-  def empty?(%CustomSet{map: map}), do: Map.size(map) == 0
+  def empty?(%CustomSet{map: map}), do: map_size(map) == 0
 
   @spec contains?(t, any) :: boolean
   def contains?(%CustomSet{map: map}, element), do: Map.has_key?(map, element)
