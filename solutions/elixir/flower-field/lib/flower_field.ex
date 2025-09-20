@@ -22,7 +22,7 @@ defmodule FlowerField do
 
   defp count_adjacent_flowers(row, col, board) do
     neighbors(row, col)
-    |> Enum.count(&is_flower?(&1, board))
+    |> Enum.count(&flower?(&1, board))
     |> case do
       0 -> " "
       count -> Integer.to_string(count)
@@ -42,11 +42,11 @@ defmodule FlowerField do
     ]
   end
 
-  defp is_flower?({row, col}, board) when row >= 0 and col >= 0 do
+  defp flower?({row, col}, board) when row >= 0 and col >= 0 do
     board
     |> Enum.at(row)
     |> then(&String.at(&1 || "", col)) == "*"
   end
 
-  defp is_flower?(_, _), do: false
+  defp flower?(_, _), do: false
 end
